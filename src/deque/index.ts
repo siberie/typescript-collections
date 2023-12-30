@@ -24,8 +24,9 @@ class Deque<TElement> {
             this._elements = [element]
             this._next = [null]
             this._prev = [null]
-        } else
+        } else {
             this.insertBefore(this._head, element)
+        }
     }
 
     public pop(): TElement | undefined {
@@ -41,10 +42,8 @@ class Deque<TElement> {
         if (oldTail < this._elements.length - 1)
             this.transplant(this._elements.length - 1, oldTail)
 
-
         this._next.pop()
         this._prev.pop()
-
         return this._elements.pop()
     }
 
@@ -62,10 +61,8 @@ class Deque<TElement> {
         if (oldHead < this._elements.length - 1)
             this.transplant(this._elements.length - 1, oldHead)
 
-
         this._next.pop()
         this._prev.pop()
-
         return this._elements.pop()
     }
 
@@ -73,17 +70,16 @@ class Deque<TElement> {
         this._elements.push(element)
         const newIndex = this.lastIndex()
 
-        if (index === this._tail)
-            this._tail = newIndex
-
-
         const next = this._next[index]
+
         this._next[index] = newIndex
         this._next[newIndex] = next
         this._prev[newIndex] = index
 
         if (next !== null)
             this._prev[next] = newIndex
+        else
+            this._tail = newIndex
     }
 
     public insertBefore(index: number, element: TElement) {
@@ -97,10 +93,8 @@ class Deque<TElement> {
 
         if (prev !== null)
             this._next[prev] = newIndex
-
-        if (index === this._head)
+        else
             this._head = newIndex
-
     }
 
     public remove(index: number) {
