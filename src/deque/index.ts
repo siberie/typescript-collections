@@ -1,154 +1,154 @@
-class Deque<TElement> {
-    private _elements: TElement[] = [];
-    private _head: number | null = null;
-    private _tail: number | null = null;
-    private _next: (number | null)[] = []
-    private _prev: (number | null)[] = []
+class Deque<Element> {
+    private elements: Element[] = [];
+    private head: number | null = null;
+    private tail: number | null = null;
+    private next: (number | null)[] = []
+    private prev: (number | null)[] = []
 
-    public push(element: TElement) {
-        if (this._tail === null) {
-            this._head = 0
-            this._tail = 0
-            this._elements = [element]
-            this._next = [null]
-            this._prev = [null]
+    public push(element: Element) {
+        if (this.tail === null) {
+            this.head = 0
+            this.tail = 0
+            this.elements = [element]
+            this.next = [null]
+            this.prev = [null]
         } else {
-            this.insertAfter(this._tail, element)
+            this.insertAfter(this.tail, element)
         }
     }
 
-    public unshift(element: TElement) {
-        if (this._head === null) {
-            this._head = 0
-            this._tail = 0
-            this._elements = [element]
-            this._next = [null]
-            this._prev = [null]
+    public unshift(element: Element) {
+        if (this.head === null) {
+            this.head = 0
+            this.tail = 0
+            this.elements = [element]
+            this.next = [null]
+            this.prev = [null]
         } else {
-            this.insertBefore(this._head, element)
+            this.insertBefore(this.head, element)
         }
     }
 
-    public pop(): TElement | undefined {
-        if (this._tail === null) return undefined
-        const oldTail = this._tail
+    public pop(): Element | undefined {
+        if (this.tail === null) return undefined
+        const oldTail = this.tail
 
-        this._tail = this._prev[this._tail]
-        if (this._tail !== null)
-            this._next[this._tail] = null
+        this.tail = this.prev[this.tail]
+        if (this.tail !== null)
+            this.next[this.tail] = null
         else
-            this._head = null
+            this.head = null
 
-        if (oldTail < this._elements.length - 1)
-            this.transplant(this._elements.length - 1, oldTail)
+        if (oldTail < this.elements.length - 1)
+            this.transplant(this.elements.length - 1, oldTail)
 
-        this._next.pop()
-        this._prev.pop()
-        return this._elements.pop()
+        this.next.pop()
+        this.prev.pop()
+        return this.elements.pop()
     }
 
-    public shift(): TElement | undefined {
-        if (this._head === null) return undefined
-        const oldHead = this._head
+    public shift(): Element | undefined {
+        if (this.head === null) return undefined
+        const oldHead = this.head
 
-        this._head = this._next[this._head]
+        this.head = this.next[this.head]
 
-        if (this._head !== null)
-            this._prev[this._head] = null
+        if (this.head !== null)
+            this.prev[this.head] = null
         else
-            this._tail = null
+            this.tail = null
 
-        if (oldHead < this._elements.length - 1)
-            this.transplant(this._elements.length - 1, oldHead)
+        if (oldHead < this.elements.length - 1)
+            this.transplant(this.elements.length - 1, oldHead)
 
-        this._next.pop()
-        this._prev.pop()
-        return this._elements.pop()
+        this.next.pop()
+        this.prev.pop()
+        return this.elements.pop()
     }
 
-    public insertAfter(index: number, element: TElement) {
-        this._elements.push(element)
+    public insertAfter(index: number, element: Element) {
+        this.elements.push(element)
         const newIndex = this.lastIndex()
 
-        const next = this._next[index]
+        const next = this.next[index]
 
-        this._next[index] = newIndex
-        this._next[newIndex] = next
-        this._prev[newIndex] = index
+        this.next[index] = newIndex
+        this.next[newIndex] = next
+        this.prev[newIndex] = index
 
         if (next !== null)
-            this._prev[next] = newIndex
+            this.prev[next] = newIndex
         else
-            this._tail = newIndex
+            this.tail = newIndex
     }
 
-    public insertBefore(index: number, element: TElement) {
-        this._elements.push(element)
+    public insertBefore(index: number, element: Element) {
+        this.elements.push(element)
         const newIndex = this.lastIndex()
 
-        const prev = this._prev[index]
-        this._prev[index] = newIndex
-        this._prev[newIndex] = prev
-        this._next[newIndex] = index
+        const prev = this.prev[index]
+        this.prev[index] = newIndex
+        this.prev[newIndex] = prev
+        this.next[newIndex] = index
 
         if (prev !== null)
-            this._next[prev] = newIndex
+            this.next[prev] = newIndex
         else
-            this._head = newIndex
+            this.head = newIndex
     }
 
     public remove(index: number) {
-        const prev = this._prev[index]
-        const next = this._next[index]
+        const prev = this.prev[index]
+        const next = this.next[index]
 
         if (prev !== null)
-            this._next[prev] = next
+            this.next[prev] = next
         else
-            this._head = next
+            this.head = next
 
         if (next !== null)
-            this._prev[next] = prev
+            this.prev[next] = prev
         else
-            this._tail = prev
+            this.tail = prev
 
-        this.transplant(this._elements.length - 1, index)
+        this.transplant(this.elements.length - 1, index)
 
-        this._next.pop()
-        this._prev.pop()
-        this._elements.pop()
+        this.next.pop()
+        this.prev.pop()
+        this.elements.pop()
     }
 
     public get length() {
-        return this._elements.length;
+        return this.elements.length;
     }
 
     private transplant(source: number, destination: number) {
         if (source === destination) return
 
-        const srcPrevious = this._prev[source]
-        const srcNext = this._next[source]
+        const srcPrevious = this.prev[source]
+        const srcNext = this.next[source]
 
-        const toElement = this._elements[destination]
+        const toElement = this.elements[destination]
 
-        this._elements[destination] = this._elements[source]
-        this._next[destination] = srcNext
-        this._prev[destination] = srcPrevious
+        this.elements[destination] = this.elements[source]
+        this.next[destination] = srcNext
+        this.prev[destination] = srcPrevious
 
-        this._elements[source] = toElement
+        this.elements[source] = toElement
 
         if (srcPrevious !== null)
-            this._next[srcPrevious] = destination
+            this.next[srcPrevious] = destination
         else
-            this._head = destination
+            this.head = destination
 
         if (srcNext !== null)
-            this._prev[srcNext] = destination
+            this.prev[srcNext] = destination
         else
-            this._tail = destination
+            this.tail = destination
     }
 
     private lastIndex() {
-        return this._elements.length - 1
+        return this.elements.length - 1
     }
 }
 
