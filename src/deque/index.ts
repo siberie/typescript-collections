@@ -1,4 +1,4 @@
-class Deque<Element> {
+class Deque<Element = unknown> implements Iterable<Element> {
     private elements: Element[] = [];
     private head: number | null = null;
     private tail: number | null = null;
@@ -120,6 +120,18 @@ class Deque<Element> {
 
     public get length() {
         return this.elements.length;
+    }
+
+    public [Symbol.iterator](): Iterator<Element> {
+        let current = this.head
+        return {
+            next: () => {
+                if (current === null) return {done: true, value: undefined}
+                const value = this.elements[current]
+                current = this.next[current]
+                return {done: false, value}
+            }
+        }
     }
 
     private transplant(source: number, destination: number) {
